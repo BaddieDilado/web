@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baddie Dilado | Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d00;
+            --bg: #000000;
+            --border-glow: #ffcc00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: white;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: fixed;
+        }
+
+        /* Screen Border */
+        .screen-border {
+            position: fixed;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            box-shadow: 0 0 15px var(--primary);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Rain Animation */
+        .rain-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        }
+        .rain-item {
+            position: absolute; font-size: 20px; opacity: 0.5;
+            animation: fall var(--speed) linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Card Layout */
+        .card {
+            width: 85%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        h2 { font-family: 'Orbitron'; font-size: 1.5rem; margin-bottom: 15px; letter-spacing: 2px; }
+        p { color: #888; margin-bottom: 30px; font-size: 0.9rem; line-height: 1.4; }
+
+        /* Buttons Group */
+        .btn-box { display: flex; justify-content: center; align-items: center; gap: 20px; min-height: 60px; }
+        
+        .btn {
+            padding: 14px 35px; border-radius: 50px; border: none; font-family: 'Orbitron';
+            font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+        }
+
+        .btn-yes { background: var(--primary); color: white; }
+        .btn-no { background: #222; color: #666; position: relative; }
+
+        /* Form Area */
+        #form-area { display: none; text-align: left; }
+        .input-group { margin-bottom: 15px; }
+        label { font-size: 0.65rem; color: var(--primary); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        input, textarea {
+            width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px; color: white; outline: none; font-family: inherit;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); }
+
+        .submit-btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; font-family: 'Orbitron'; font-weight: 700; cursor: pointer; margin-top: 10px; }
+
+        #toast { position: fixed; top: 30px; background: white; color: black; padding: 10px 25px; border-radius: 50px; font-weight: 700; display: none; z-index: 10000; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="screen-border"></div>
+<div class="rain-container" id="rain"></div>
+
+<div class="card" id="main-card">
+    <div id="intro">
+        <span style="font-size: 3rem; display: block; margin-bottom: 10px;">🎀</span>
+        <h2>Baddie Dilado</h2>
+        <p>kya kar rha hai tum aacha hai </p>
+        
+        <div class="btn-box">
+            <button class="btn btn-yes" onclick="openPortal()">YES</button>
+            <button class="btn btn-no" id="no-btn">NO</button>
+        </div>
+    </div>
+
+    <div id="form-area">
+        <h2 style="font-size: 1.2rem; margin-bottom: 20px;">Secret Portal</h2>
+        <div id="id-fields">
+            <div class="input-group">
+                <label>Name</label>
+                <input type="text" id="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <label>Age</label>
+                <input type="number" id="age" placeholder="Age" required>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Message</label>
+            <textarea id="message" rows="4" placeholder="Type your secret..." required></textarea>
+        </div>
+        <button class="submit-btn" id="sBtn" onclick="sendData()">SEND MESSAGE</button>
+    </div>
+</div>
+
+<div id="toast">SENT SUCCESSFULLY</div>
+
+<script>
+    // Emoji Rain
+    const rain = document.getElementById('rain');
+    const icons = ['❤','💛','🧡','💞','🍓'];
+    for(let i=0; i<30; i++) {
+        const div = document.createElement('div');
+        div.className = 'rain-item';
+        div.innerText = icons[Math.floor(Math.random()*icons.length)];
+        div.style.left = Math.random() * 100 + '%';
+        div.style.setProperty('--speed', Math.random() * 4 + 3 + 's');
+        div.style.animationDelay = Math.random() * 5 + 's';
+        rain.appendChild(div);
+    }
+
+    // Smart Evasive Button (Stays within border)
+    const noBtn = document.getElementById('no-btn');
+    const moveNo = () => {
+        const padding = 60; // Border aur margin se door rakhne ke liye
+        const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+        const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+        
+        const randomX = Math.max(padding, Math.random() * maxX);
+        const randomY = Math.max(padding, Math.random() * maxY);
+        
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = randomX + 'px';
+        noBtn.style.top = randomY + 'px';
+        noBtn.style.zIndex = '99999';
+    };
+
+    noBtn.addEventListener('mouseover', moveNo);
+    noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); });
+
+    function openPortal() {
+        document.getElementById('intro').style.display = 'none';
+        document.getElementById('form-area').style.display = 'block';
+        if (localStorage.getItem('user_name')) {
+            document.getElementById('id-fields').classList.add('hidden');
+            document.getElementById('name').required = false;
+            document.getElementById('age').required = false;
+        }
+    }
+
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2HQlhTg3fB3gjTi9akqjbVCUTamk6J-0nYt2WmFT3yOeqg4m6MBUlUzVMnnAQ5NUlfQ/exec';
+
+    async function sendData() {
+        const btn = document.getElementById('sBtn');
+        const name = localStorage.getItem('user_name') || document.getElementById('name').value;
+        const age = localStorage.getItem('user_age') || document.getElementById('age').value;
+        const msg = document.getElementById('message').value;
+        const uid = localStorage.getItem('user_uid') || 'ID-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+        if(!msg || (!localStorage.getItem('user_name') && (!name || !age))) return;
+
+        btn.disabled = true;
+        btn.innerText = "SENDING...";
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ userId: uid, name, age, message: msg })
+            });
+            localStorage.setItem('user_uid', uid);
+            localStorage.setItem('user_name', name);
+            localStorage.setItem('user_age', age);
+            
+            document.getElementById('toast').style.display = 'block';
+            setTimeout(() => location.reload(), 1500);
+        } catch (e) {
+            btn.disabled = false;
+            btn.innerText = "RETRY";
+        }
+    }
+</script>
+</body>
+</html>
