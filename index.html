@@ -112,7 +112,7 @@
         <h1 style="font-size: 1.5rem; margin-bottom: 10px;">🎀 Please be mine</h1>
         <div class="dog-frame">
             <!-- APNI DOG PHOTO KA LINK YAHA DALEIN -->
-            <img src="https://img.freepik.com/free-photo/cute-puppy-sitting-grass_23-2148949580.jpg" alt="Dog MUAH">
+            <img src="https://iili.io/CSKMVZG.jpg" alt="Dog MUAH">
         </div>
         <h1 style="background: white; display: inline-block; padding: 5px 20px; border-radius: 10px; font-weight: 900; letter-spacing: 2px;">*MUAH*</h1>
     </div>
@@ -142,13 +142,13 @@
         noBtn.style.top = y + 'px';
     });
 
-    const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+    const SCRIPT_URL = 'ttps://script.google.com/macros/s/AKfycbxt7OqmIs7sCaH183sH0uXnBtMYBk8Fh4kjZdkn0jzACDBPNYX7iLRACrGxYptHGMULfw/exec';
 
     function toPhase2() {
         document.getElementById('phase1').classList.remove('active');
         document.getElementById('phase2').classList.add('active');
         // Log to Google Sheet
-        if(SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+        if(SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbxt7OqmIs7sCaH183sH0uXnBtMYBk8Fh4kjZdkn0jzACDBPNYX7iLRACrGxYptHGMULfw/exec') {
             fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({event: 'Yes Clicked'}) });
         }
     }
