@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>A Small Question 🎀</title>
+    <style>
+        :root {
+            --pink: #ff4d94;
+            --purple: #a64dff;
+            --bg: linear-gradient(180deg, #fceaff 0%, #fbd4ff 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Background Emoji Rain */
+        .emoji-rain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        }
+        .emoji {
+            position: absolute; font-size: 24px; opacity: 0.6;
+            animation: fall var(--d) linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container { width: 90%; max-width: 400px; z-index: 10; }
+
+        h3 { color: var(--purple); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+        h1 { color: #800080; font-family: 'Georgia', serif; font-style: italic; margin-bottom: 20px; line-height: 1.2; }
+        p { color: #666; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.4; padding: 0 10px; }
+
+        /* Buttons */
+        .btn-box { display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; height: 150px; }
+        .btn {
+            padding: 15px 60px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-yes {
+            background: linear-gradient(to right, #ff4db8, #ff007f);
+            color: white; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(255, 0, 127, 0.2);
+        }
+        .btn-no { background: white; color: #999; box-shadow: 0 5px 10px rgba(0,0,0,0.05); position: absolute; }
+
+        /* Phases */
+        .phase { display: none; animation: fadeIn 0.8s ease; }
+        .active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* Balloon Style */
+        .balloon {
+            width: 150px; height: 180px; background: #ff3385; border-radius: 50%;
+            margin: 0 auto; position: relative; cursor: pointer;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1), 0 10px 20px rgba(255, 51, 133, 0.3);
+        }
+        .balloon::after {
+            content: ''; position: absolute; bottom: -10px; left: 50%;
+            border-left: 10px solid transparent; border-right: 10px solid transparent;
+            border-bottom: 15px solid #ff3385; transform: translateX(-50%);
+        }
+
+        /* Final Dog Image */
+        .dog-frame {
+            width: 250px; height: 250px; border: 8px solid #ff3385; border-radius: 20px;
+            margin: 0 auto 20px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .dog-frame img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+<div class="emoji-rain" id="rain"></div>
+
+<div class="container">
+    <!-- Phase 1: The Question -->
+    <div id="phase1" class="phase active">
+        <h3>A Small Question</h3>
+        <h1>Will you be mine, Aastha?</h1>
+        <p>There's only one honest answer here — the other one's a little shy and won't sit still long enough to be picked.</p>
+        
+        <div class="btn-box">
+            <button class="btn btn-no" id="noBtn">No</button>
+            <button class="btn btn-yes" onclick="toPhase2()" style="margin-top: 70px;">Yes</button>
+        </div>
+        <p style="margin-top: 20px; font-style: italic; font-size: 0.8rem;">come on, you know the answer — it's yes.</p>
+    </div>
+
+    <!-- Phase 2: The Balloon -->
+    <div id="phase2" class="phase">
+        <h3>Good Choice</h3>
+        <h1>Pop it to find out</h1>
+        <p>One tap. That's all it takes.</p>
+        <div class="balloon" onclick="popBalloon()"></div>
+    </div>
+
+    <!-- Phase 3: The MUAH Dog -->
+    <div id="phase3" class="phase">
+        <h1 style="font-size: 1.5rem; margin-bottom: 10px;">🎀 Please be mine</h1>
+        <div class="dog-frame">
+            <!-- APNI DOG PHOTO KA LINK YAHA DALEIN -->
+            <img src="https://img.freepik.com/free-photo/cute-puppy-sitting-grass_23-2148949580.jpg" alt="Dog MUAH">
+        </div>
+        <h1 style="background: white; display: inline-block; padding: 5px 20px; border-radius: 10px; font-weight: 900; letter-spacing: 2px;">*MUAH*</h1>
+    </div>
+</div>
+
+<script>
+    // Emoji Rain Logic
+    const rain = document.getElementById('rain');
+    const emojis = ['🎀','💗','💖','💝','💓','💌','❣️'];
+    for(let i=0; i<30; i++) {
+        const div = document.createElement('div');
+        div.className = 'emoji';
+        div.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+        div.style.left = Math.random() * 100 + '%';
+        div.style.setProperty('--d', Math.random() * 5 + 3 + 's');
+        div.style.animationDelay = Math.random() * 5 + 's';
+        rain.appendChild(div);
+    }
+
+    // No Button Evasive Movement
+    const noBtn = document.getElementById('noBtn');
+    noBtn.addEventListener('mouseover', () => {
+        const x = Math.random() * (window.innerWidth - 100);
+        const y = Math.random() * (window.innerHeight - 50);
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = x + 'px';
+        noBtn.style.top = y + 'px';
+    });
+
+    const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+
+    function toPhase2() {
+        document.getElementById('phase1').classList.remove('active');
+        document.getElementById('phase2').classList.add('active');
+        // Log to Google Sheet
+        if(SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({event: 'Yes Clicked'}) });
+        }
+    }
+
+    function popBalloon() {
+        // Simple pop effect
+        const balloon = document.querySelector('.balloon');
+        balloon.style.transform = 'scale(1.5)';
+        balloon.style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('phase2').classList.remove('active');
+            document.getElementById('phase3').classList.add('active');
+        }, 300);
+    }
+</script>
+
+</body>
+</html>
