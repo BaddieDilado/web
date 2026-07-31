@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/x-icon" href="https://iili.io/CSKMVZG.jpg">
     <title>A Small Question 🎀</title>
     <style>
         :root {
@@ -67,6 +68,7 @@
             width: 150px; height: 180px; background: #ff3385; border-radius: 50%;
             margin: 0 auto; position: relative; cursor: pointer;
             box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1), 0 10px 20px rgba(255, 51, 133, 0.3);
+            transition: 0.3s; /* Smooth pop transition */
         }
         .balloon::after {
             content: ''; position: absolute; bottom: -10px; left: 50%;
@@ -74,7 +76,7 @@
             border-bottom: 15px solid #ff3385; transform: translateX(-50%);
         }
 
-        /* Final Dog Image */
+        /* Photo Frames */
         .dog-frame {
             width: 250px; height: 250px; border: 8px solid #ff3385; border-radius: 20px;
             margin: 0 auto 20px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.1);
@@ -90,7 +92,7 @@
     <!-- Phase 1: The Question -->
     <div id="phase1" class="phase active">
         <h3>A Small Question</h3>
-        <h1>Will you  be mine,honey 🍯</h1>
+        <h1>Will you be mine, honey 🍯</h1>
         <p>There's only one honest answer here — the other one's a little shy and won't sit still long enough to be picked.</p>
         
         <div class="btn-box">
@@ -100,19 +102,29 @@
         <p style="margin-top: 20px; font-style: italic; font-size: 0.8rem;">come on, you know the answer — it's yes.</p>
     </div>
 
-    <!-- Phase 2: The Balloon -->
+    <!-- Phase 2: Auto Balloon Pop + Photo + Continue -->
     <div id="phase2" class="phase">
         <h3>Good Choice</h3>
-        <h1>Pop it to find out</h1>
-        <p>One tap. That's all it takes.</p>
-        <div class="balloon" onclick="popBalloon()"></div>
+        <h1 id="phase2Title">Wait for it...</h1>
+        
+        <!-- Balloon -->
+        <div class="balloon" id="autoBalloon"></div>
+        
+        <!-- Hidden Photo and Continue Button -->
+        <div id="phase2Content" style="display: none; margin-top: 20px;">
+            <div class="dog-frame">
+                <!-- BICH WALI PHOTO KA LINK YAHA DALEIN -->
+                <img src="https://iili.io/CSKM0vt.jpg" alt="Surprise Photo">
+            </div>
+            <button class="btn btn-yes" onclick="toPhase3()">Continue</button>
+        </div>
     </div>
 
-    <!-- Phase 3: The MUAH Dog -->
+    <!-- Phase 3: The Final Dog Image -->
     <div id="phase3" class="phase">
         <h1 style="font-size: 1.5rem; margin-bottom: 10px;">🎀 Please be mine</h1>
         <div class="dog-frame">
-            <!-- APNI DOG PHOTO KA LINK YAHA DALEIN -->
+            <!-- LAST DOG PHOTO KA LINK YAHA DALEIN -->
             <img src="https://iili.io/CSKMVZG.jpg" alt="i love you">
         </div>
         <h1 style="background: white; display: inline-block; padding: 5px 20px; border-radius: 10px; font-weight: 900; letter-spacing: 2px;">*I LOVE YOU 🎀*</h1>
@@ -133,36 +145,49 @@
         rain.appendChild(div);
     }
 
-    // No Button Evasive Movement
+    // No Button Evasive Movement (Fixed for Mobile)
     const noBtn = document.getElementById('noBtn');
-    noBtn.addEventListener('mouseover', () => {
+    
+    function moveNoButton(e) {
+        e.preventDefault(); // Prevents touch scrolling while clicking
         const x = Math.random() * (window.innerWidth - 100);
         const y = Math.random() * (window.innerHeight - 50);
         noBtn.style.position = 'fixed';
         noBtn.style.left = x + 'px';
         noBtn.style.top = y + 'px';
-    });
+    }
 
-    const SCRIPT_URL = 'ttps://script.google.com/macros/s/AKfycbxt7OqmIs7sCaH183sH0uXnBtMYBk8Fh4kjZdkn0jzACDBPNYX7iLRACrGxYptHGMULfw/exec';
+    // Mouse aur Phone dono ke liye add kar diya
+    noBtn.addEventListener('mouseover', moveNoButton);
+    noBtn.addEventListener('touchstart', moveNoButton);
+
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxt7OqmIs7sCaH183sH0uXnBtMYBk8Fh4kjZdkn0jzACDBPNYX7iLRACrGxYptHGMULfw/exec';
 
     function toPhase2() {
         document.getElementById('phase1').classList.remove('active');
         document.getElementById('phase2').classList.add('active');
-        // Log to Google Sheet
+        
         if(SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbxt7OqmIs7sCaH183sH0uXnBtMYBk8Fh4kjZdkn0jzACDBPNYX7iLRACrGxYptHGMULfw/exec') {
             fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({event: 'Yes Clicked'}) });
         }
+
+        // 1.5 seconds ke baad gubara khud foot jayega
+        setTimeout(() => {
+            const balloon = document.getElementById('autoBalloon');
+            balloon.style.transform = 'scale(1.5)';
+            balloon.style.opacity = '0';
+            
+            setTimeout(() => {
+                balloon.style.display = 'none';
+                document.getElementById('phase2Title').innerText = "Surprise! 🎉";
+                document.getElementById('phase2Content').style.display = 'block'; // Photo aur button show karega
+            }, 300);
+        }, 1500);
     }
 
-    function popBalloon() {
-        // Simple pop effect
-        const balloon = document.querySelector('.balloon');
-        balloon.style.transform = 'scale(1.5)';
-        balloon.style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('phase2').classList.remove('active');
-            document.getElementById('phase3').classList.add('active');
-        }, 300);
+    function toPhase3() {
+        document.getElementById('phase2').classList.remove('active');
+        document.getElementById('phase3').classList.add('active');
     }
 </script>
 
